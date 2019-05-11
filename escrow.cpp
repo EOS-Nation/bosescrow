@@ -52,15 +52,21 @@ namespace bos {
     ACTION escrow::init(name sender, name receiver, name approver, time_point_sec expires, string memo, std::optional<uint64_t> ext_reference ) {
         require_auth(sender);
 
-        // Ensure sender is a BOS Executive
+        // Ensure sender is BOS Executive
         eosio_assert(
             sender == name("bet.bos") ||
-            sender == name("betbetbet111") ||
-            sender == name("betbetbet112") ||
-            sender == name("betbetbet113") ||
-            sender == name("betbetbet114") ||
-            sender == name("betbetbet115") ,
-            "You must be a BOS executive to create an escrow."
+            // Add `betbetbet111` account for testing
+            sender == name("betbetbet111") ,
+            "Only BOS Executive can create an escrow."
+        );
+
+        // Ensure approve is BOS Executive or eosio
+        eosio_assert(
+            approver == name("bet.bos") ||
+            approver == name("eosio") ||
+            // Add `betbetbet111` account for testing
+            approver == name("betbetbet111") ,
+            "Approver must be BOS Executive or EOSIO."
         );
 
         extended_asset zero_asset{{0, symbol{"BOS", 4}}, "eosio.token"_n};
