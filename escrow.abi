@@ -113,7 +113,7 @@
                     "type": "name"
                 },
                 {
-                    "name": "auditor",
+                    "name": "approver",
                     "type": "name"
                 },
                 {
@@ -183,7 +183,7 @@
                     "type": "name"
                 },
                 {
-                    "name": "auditor",
+                    "name": "approver",
                     "type": "name"
                 },
                 {

@@ -8,14 +8,14 @@ An escrow contract designed for paying worker proposals.  The intention is that 
 - The sender of an escrow will temporarily be whitelisted to BOS executives. In the future anyone may be a sender
 - The sender may only have one unfilled escrow at any given time, however they may have many filled escrows
 - To fill an escrow the sender must transfer the `BOS` tokens to this contract. An unfilled escrow will be filled
-- The receiver is considered as always approving the escrow. An approval must come from either the sender or the auditor
+- The receiver is considered as always approving the escrow. An approval must come from either the sender or the approver
 - The sender may only cancel an escrow that has not been filled
 - The sender may only refund an escrow that has passed it's expiry
 - Unapprove only removes an existing approval, if the action is made before the receiver uses the claim action
 - A sender may extend the expiry but not shorten it
-- The auditor may change extend or shorten the expiry
-- The auditor may close an escrow. This is essentially the same as refunding it, however without waiting for the expiry to lapse
-- The auditor may Lock and Unlock an escrow. This prevents ALL actions except unlock and actions made by the auditor.
+- The approver may change extend or shorten the expiry
+- The approver may close an escrow. This is essentially the same as refunding it, however without waiting for the expiry to lapse
+- The approver may Lock and Unlock an escrow. This prevents ALL actions except unlock and actions made by the approver.
 
 <h1 class="contract">
     init
@@ -27,7 +27,7 @@ An escrow contract designed for paying worker proposals.  The intention is that 
 
 - __sender__ is an eosio account name.
 - __receiver__ is an eosio account name.
-- __auditor__ is an eosio account name.
+- __approver__ is an eosio account name.
 - __expires__ The date/time after which the escrow amount can be refunded by the sender.
 - __memo__ is a memo to send as the eventual transfer memo at the end of the escrow contract.
 - __ext_reference__ is a reference to to external id held my another contract or entity as opposed to the internal auto-incrementing key.

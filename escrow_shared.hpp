@@ -10,7 +10,7 @@ struct [[eosio::table("escrows"), eosio::contract("escrow")]] escrow_info {
     uint64_t        key;
     name            sender;
     name            receiver;
-    name            auditor;
+    name            approver;
     vector<name>    approvals;
     extended_asset  ext_asset;
     string          memo;

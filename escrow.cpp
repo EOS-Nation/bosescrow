@@ -49,7 +49,7 @@ namespace bos {
         eosio_assert(found, "Could not find existing escrow to deposit to, transfer cancelled");
     }
 
-    ACTION escrow::init(name sender, name receiver, name auditor, time_point_sec expires, string memo, std::optional<uint64_t> ext_reference ) {
+    ACTION escrow::init(name sender, name receiver, name approver, time_point_sec expires, string memo, std::optional<uint64_t> ext_reference ) {
         require_auth(sender);
 
         // Ensure sender is a BOS Executive
@@ -81,7 +81,7 @@ namespace bos {
             p.key = escrows.available_primary_key();
             p.sender = sender;
             p.receiver = receiver;
-            p.auditor = auditor;
+            p.approver = approver;
             p.ext_asset = zero_asset;
             p.expires = expires;
             p.memo = memo;
@@ -102,7 +102,7 @@ namespace bos {
 
         eosio_assert(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
 
-        eosio_assert(esc_itr->sender == approver || esc_itr->auditor == approver, "You are not allowed to approve this escrow.");
+        eosio_assert(esc_itr->sender == approver || esc_itr->approver == approver, "You are not allowed to approve this escrow.");
 
         auto approvals = esc_itr->approvals;
         eosio_assert(std::find(approvals.begin(), approvals.end(), approver) == approvals.end(), "You have already approved this escrow");
@@ -146,7 +146,7 @@ namespace bos {
 
         eosio_assert(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
 
-        eosio_assert(esc_itr->locked == false, "This escrow has been locked by the auditor");
+        eosio_assert(esc_itr->locked == false, "This escrow has been locked by the approver");
 
         auto approvals = esc_itr->approvals;
 
@@ -204,7 +204,7 @@ namespace bos {
 
         eosio_assert(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
 
-        eosio_assert(esc_itr->locked == false, "This escrow has been locked by the auditor");
+        eosio_assert(esc_itr->locked == false, "This escrow has been locked by the approver");
 
         time_point_sec time_now = time_point_sec(current_time_point());
 
@@ -239,12 +239,12 @@ namespace bos {
 
         time_point_sec time_now = time_point_sec(current_time_point());
 
-        //auditors may extend or shorten the time
-        //the sender may only extend
+        // approver may extend or shorten the time
+        // the sender may only extend
         if(has_auth(esc_itr->sender)) {
             eosio_assert(expires > esc_itr->expires, "You may only extend the expiry");
         } else {
-            require_auth(esc_itr->auditor);
+            require_auth(esc_itr->approver);
         }
 
         escrows.modify(esc_itr, eosio::same_payer, [&](escrow_info &e){
@@ -262,13 +262,13 @@ namespace bos {
 
 
     /*
-     * Allows the auditor to close and refund an unexpired escrow
+     * Allows the approver to close and refund an unexpired escrow
      */
     ACTION escrow::close(uint64_t key) {
         auto esc_itr = escrows.find(key);
         eosio_assert(esc_itr != escrows.end(), "Could not find escrow with that index");
 
-        require_auth(esc_itr->auditor);
+        require_auth(esc_itr->approver);
         eosio_assert(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
 
         eosio::action(
@@ -287,13 +287,13 @@ namespace bos {
     }
 
     /*
-     * Allows the auditor to lock an escrow preventing any actions by sender or receiver
+     * Allows the approver to lock an escrow preventing any actions by sender or receiver
      */
     ACTION escrow::lock(uint64_t key, bool locked) {
 
         auto esc_itr = escrows.find(key);
         eosio_assert(esc_itr != escrows.end(), "Could not find escrow with that index");
-        require_auth(esc_itr->auditor);
+        require_auth(esc_itr->approver);
         eosio_assert(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
 
         escrows.modify(esc_itr, eosio::same_payer, [&](escrow_info &e){
