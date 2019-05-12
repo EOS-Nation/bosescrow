@@ -160,7 +160,7 @@ namespace bos {
 
         // inline transfer the required funds
         eosio::action(
-                eosio::permission_level{_self , "active"_n },
+                eosio::permission_level{_self , "xfer"_n },
                 esc_itr->ext_asset.contract, "transfer"_n,
                 make_tuple( _self, esc_itr->receiver, esc_itr->ext_asset.quantity, esc_itr->memo)
         ).send();
@@ -218,7 +218,7 @@ namespace bos {
 
 
         eosio::action(
-                eosio::permission_level{_self , "active"_n }, esc_itr->ext_asset.contract, "transfer"_n,
+                eosio::permission_level{_self , "xfer"_n }, esc_itr->ext_asset.contract, "transfer"_n,
                 make_tuple( _self, esc_itr->sender, esc_itr->ext_asset.quantity, esc_itr->memo)
         ).send();
 
@@ -277,7 +277,7 @@ namespace bos {
         eosio_assert(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
 
         eosio::action(
-                eosio::permission_level{_self , "active"_n }, esc_itr->ext_asset.contract, "transfer"_n,
+                eosio::permission_level{_self , "xfer"_n }, esc_itr->ext_asset.contract, "transfer"_n,
                 make_tuple( _self, esc_itr->sender, esc_itr->ext_asset.quantity, esc_itr->memo)
         ).send();
 
