@@ -111,9 +111,5 @@ namespace bos {
 
         // 6 months in seconds (Computatio: 6 months * average days per month * 24 hours * 60 minutes * 60 seconds)
         constexpr static uint32_t SIX_MONTHS_IN_SECONDS = (uint32_t) (6 * (365.25 / 12) * 24 * 60 * 60);
-
-        // static inline time_point_sec current_time_point_sec() {
-        //     return time_point_sec(current_time_point());
-        // }
     };
 };

@@ -43,10 +43,9 @@ ACTION escrow::init(name sender, name receiver, name approver, time_point_sec ex
     check( is_account( approver ), "approver account does not exist");
 
     // Validate expire time_point_sec
-    // TO-DO
-    // check(expires > current_time_point(), "expires must be a value in the future.");
-    // time_point_sec max_expires = current_time_point() + SIX_MONTHS_IN_SECONDS;
-    // check(expires <= max_expires, "expires must be within 6 months from now.");
+    check(expires > current_time_point(), "expires must be a value in the future.");
+    time_point_sec max_expires = current_time_point() + time_point_sec(SIX_MONTHS_IN_SECONDS);
+    check(expires <= max_expires, "expires must be within 6 months from now.");
 
     // Ensure sender is BOS Executive
     check(
