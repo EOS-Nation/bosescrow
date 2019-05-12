@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "escrow/escrow.hpp"
+#include "escrow.hpp"
 
 using namespace eosio;
 using namespace std;
