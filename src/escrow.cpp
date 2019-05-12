@@ -4,7 +4,8 @@ namespace bos {
 
 escrow::~escrow() {}
 
-ACTION escrow::transfer(name from,
+[[eosio::on_notify("eosio.token::transfer")]]
+void escrow::transfer(name from,
                             name to,
                             asset quantity,
                             string memo) {
@@ -342,33 +343,33 @@ std::optional<uint64_t> escrow::key_for_external_key(std::optional<uint64_t> ext
 }
 } /// namespace bos
 
-#define EOSIO_ABI_EX(TYPE, MEMBERS) \
-extern "C" { \
-   void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
-      if( action == "onerror"_n.value) { \
-         /* onerror is only valid if it is for the "eosio" code account and authorized by "eosio"'s "active permission */ \
-         check(code == "eosio"_n.value, "onerror action's are only valid from the \"eosio\" system account"); \
-      } \
-      auto self = receiver; \
-      if( (code == self  && action != "transfer"_n.value) || (action == "transfer"_n.value) ) { \
-         switch( action ) { \
-            EOSIO_DISPATCH_HELPER( TYPE, MEMBERS ) \
-         } \
-         /* does not allow destructor of thiscontract to run: eosio_exit(0); */ \
-      } \
-   } \
-}
+// #define EOSIO_ABI_EX(TYPE, MEMBERS) \
+// extern "C" { \
+//    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
+//       if( action == "onerror"_n.value) { \
+//          /* onerror is only valid if it is for the "eosio" code account and authorized by "eosio"'s "active permission */ \
+//          check(code == "eosio"_n.value, "onerror action's are only valid from the \"eosio\" system account"); \
+//       } \
+//       auto self = receiver; \
+//       if( (code == self  && action != "transfer"_n.value) || (action == "transfer"_n.value) ) { \
+//          switch( action ) { \
+//             EOSIO_DISPATCH_HELPER( TYPE, MEMBERS ) \
+//          } \
+//          /* does not allow destructor of thiscontract to run: eosio_exit(0); */ \
+//       } \
+//    } \
+// }
 
-EOSIO_DISPATCH(bos::escrow,
-              (transfer)
-              (init)
-              (approve)(approveext)
-              (unapprove)(unapproveext)
-              (claim)(claimext)
-              (refund)(refundext)
-              (cancel)(cancelext)
-              (extend)(extendext)
-              (close)(closeext)
-              (lock)(lockext)
-              (clean)
-)
+// EOSIO_DISPATCH(bos::escrow,
+//               (transfer)
+//               (init)
+//               (approve)(approveext)
+//               (unapprove)(unapproveext)
+//               (claim)(claimext)
+//               (refund)(refundext)
+//               (cancel)(cancelext)
+//               (extend)(extendext)
+//               (close)(closeext)
+//               (lock)(lockext)
+//               (clean)
+// )

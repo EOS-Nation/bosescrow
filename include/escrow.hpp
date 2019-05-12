@@ -42,7 +42,8 @@ namespace bos {
 
         ACTION init(name sender, name receiver, name approver, time_point_sec expires, string memo, std::optional<uint64_t> ext_reference);
 
-        ACTION transfer(name from, name to, asset quantity, string memo);
+        [[eosio::on_notify("eosio.token::transfer")]]
+        void transfer(name from, name to, asset quantity, string memo);
 
         ACTION approve(uint64_t key, name approver);
 
