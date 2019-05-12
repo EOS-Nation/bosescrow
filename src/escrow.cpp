@@ -56,6 +56,12 @@ namespace bos {
         check( is_account( receiver ), "receiver account does not exist");
         check( is_account( approver ), "approver account does not exist");
 
+        // Validate expire time_point_sec
+        // TO-DO
+        check(expires > current_time_point(), "expires must be a value in the future.");
+        time_point_sec max_expires = current_time_point() + SIX_MONTHS_IN_SECONDS;
+        check(expires <= max_expires, "expires must be within 6 months from now.");
+
         // Ensure sender is BOS Executive
         eosio_assert(
             sender == name("bet.bos"),
@@ -119,6 +125,12 @@ namespace bos {
         eosio_assert(std::find(approvals.begin(), approvals.end(), approver) == approvals.end(), "You have already approved this escrow");
 
         escrows.modify(esc_itr, approver, [&](escrow_info &e){
+            // if approver is bet.bos, no change, allow proposer to claim 100% of the fund
+            // if approver is BPs, only keep 90% fund for proposer to claim, and BET.BOS will manually execute transfer ACTION in escrow.bos to send fund to each BPs and each auditors
+            if (approver == name("eosio")) {
+                // TO-DO
+                e.ext_asset = extended_asset{quantity, sending_code};
+            }
             e.approvals.push_back(approver);
         });
     }
