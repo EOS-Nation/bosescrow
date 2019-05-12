@@ -4,6 +4,35 @@ An escrow contract designed for paying worker proposals.  The intention is that 
 
 > Original source code was gratefully authored by [eosDAC](https://github.com/eosdac/dacescrow).
 
+## Quickstart
+
+### Init Escrow
+
+> Only `bet.bos@active` can `init` an escrow.
+> This will initialize the escrow between the `sender` & `receiver`.
+> BOS funds must be `transfer` into the `escrow.bos` account before starting another escrow.
+
+```bash
+$ bteosc tx create escrow.bos init '{"sender":"bet.bos","receiver":"<RECEIVER>","approver":"eosio","expires":"2019-09-15T00:00:00","memo":"send BOS escrow funds", "ext_reference":null}' -p bet.bos
+```
+
+### Approve Escrow
+
+> Only `bet.bos@active` or `eosio@active` are allowed to be the `approver`
+
+```bash
+$ eosc tx create escrow.bos approve '{"key":<KEY>,"approver":"bet.bos"}' -p bet.bos
+```
+
+### Claim Escrow
+
+> Executing `claim` will complete the escrow process and transfer the BOS tokens to the receiver.
+> Anyone can execute the `claim` action.
+
+```bash
+$ eosc tx create escrow.bos claim '{"key":<KEY>}' -p <ACCOUNT>
+```
+
 ## Caveats
 - The sender of an escrow will temporarily be whitelisted to BOS executives. In the future anyone may be a sender
 - The sender may only have one unfilled escrow at any given time, however they may have many filled escrows
