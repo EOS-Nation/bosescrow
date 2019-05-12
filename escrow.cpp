@@ -54,18 +54,14 @@ namespace bos {
 
         // Ensure sender is BOS Executive
         eosio_assert(
-            sender == name("bet.bos") ||
-            // Add `betbetbet111` account for testing
-            sender == name("betbetbet111") ,
+            sender == name("bet.bos"),
             "Only BOS Executive can create an escrow."
         );
 
         // Ensure approve is BOS Executive or eosio
         eosio_assert(
             approver == name("bet.bos") ||
-            approver == name("eosio") ||
-            // Add `betbetbet111` account for testing
-            approver == name("betbetbet111") ,
+            approver == name("eosio"),
             "Approver must be BOS Executive or EOSIO."
         );
 
