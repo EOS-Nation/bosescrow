@@ -15,6 +15,13 @@
         "permission": "active"
       },
       "weight": 1
+    },
+    {
+      "permission": {
+        "actor": "escrow.bos",
+        "permission": "eosio.code"
+      },
+      "weight": 1
     }
   ]
 }
