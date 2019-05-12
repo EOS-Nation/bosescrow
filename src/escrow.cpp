@@ -113,8 +113,7 @@ ACTION escrow::approve(uint64_t key, name approver) {
         // if approver is bet.bos, no change, allow proposer to claim 100% of the fund
         // if approver is BPs, only keep 90% fund for proposer to claim, and BET.BOS will manually execute transfer ACTION in escrow.bos to send fund to each BPs and each auditors
         if (approver == name("eosio")) {
-            // TO-DO
-            // e.ext_asset = extended_asset{quantity, sending_code};
+            e.ext_asset.quantity.amount = e.ext_asset.quantity.amount * 0.90;
         }
         e.approvals.push_back(approver);
     });
