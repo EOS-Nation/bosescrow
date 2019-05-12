@@ -50,7 +50,11 @@ namespace bos {
     }
 
     ACTION escrow::init(name sender, name receiver, name approver, time_point_sec expires, string memo, std::optional<uint64_t> ext_reference ) {
+        check( sender != receiver, "cannot escrow to self" );
+        check( receiver != approver, "receiver cannot be approver" );
         require_auth(sender);
+        check( is_account( receiver ), "receiver account does not exist");
+        check( is_account( approver ), "approver account does not exist");
 
         // Ensure sender is BOS Executive
         eosio_assert(
@@ -64,6 +68,11 @@ namespace bos {
             approver == name("eosio"),
             "Approver must be BOS Executive or EOSIO."
         );
+
+        // Notify the following accounts
+        require_recipient( sender );
+        require_recipient( receiver );
+        require_recipient( approver );
 
         extended_asset zero_asset{{0, symbol{"BOS", 4}}, "eosio.token"_n};
 
