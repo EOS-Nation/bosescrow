@@ -58,9 +58,9 @@ namespace bos {
 
         // Validate expire time_point_sec
         // TO-DO
-        check(expires > current_time_point(), "expires must be a value in the future.");
-        time_point_sec max_expires = current_time_point() + SIX_MONTHS_IN_SECONDS;
-        check(expires <= max_expires, "expires must be within 6 months from now.");
+        // check(expires > current_time_point(), "expires must be a value in the future.");
+        // time_point_sec max_expires = current_time_point() + SIX_MONTHS_IN_SECONDS;
+        // check(expires <= max_expires, "expires must be within 6 months from now.");
 
         // Ensure sender is BOS Executive
         eosio_assert(
@@ -129,7 +129,7 @@ namespace bos {
             // if approver is BPs, only keep 90% fund for proposer to claim, and BET.BOS will manually execute transfer ACTION in escrow.bos to send fund to each BPs and each auditors
             if (approver == name("eosio")) {
                 // TO-DO
-                e.ext_asset = extended_asset{quantity, sending_code};
+                // e.ext_asset = extended_asset{quantity, sending_code};
             }
             e.approvals.push_back(approver);
         });
