@@ -148,7 +148,7 @@ namespace bos {
         auto esc_itr = escrows.find(key);
         eosio_assert(esc_itr != escrows.end(), "Could not find escrow with that index");
 
-        require_auth(esc_itr->receiver);
+        // require_auth(esc_itr->receiver);
 
         eosio_assert(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
 
@@ -158,13 +158,12 @@ namespace bos {
 
         eosio_assert(approvals.size() >= 1, "This escrow has not received the required approvals to claim");
 
-        //inline transfer the required funds
+        // inline transfer the required funds
         eosio::action(
                 eosio::permission_level{_self , "active"_n },
                 esc_itr->ext_asset.contract, "transfer"_n,
                 make_tuple( _self, esc_itr->receiver, esc_itr->ext_asset.quantity, esc_itr->memo)
         ).send();
-
 
         escrows.erase(esc_itr);
     }
