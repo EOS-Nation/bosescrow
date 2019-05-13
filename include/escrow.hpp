@@ -101,6 +101,4 @@ class [[eosio::contract("escrow")]] escrow : public eosio::contract {
 
         escrows_table escrows;
         name sending_code;
-
-        std::optional<uint64_t> key_for_external_key(std::optional<uint64_t> ext_key);
 };
