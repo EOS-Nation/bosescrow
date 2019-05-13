@@ -23,9 +23,7 @@ using std::vector;
 using std::function;
 using std::string;
 
-namespace bos {
-    class escrow : public contract {
-
+class [[eosio::contract("escrow")]] escrow : public eosio::contract {
     public:
 
         escrow(name s, name code, datastream<const char *> ds)
@@ -36,52 +34,76 @@ namespace bos {
 
         ~escrow();
 
-        /**
-         * Escrow contract
-         */
-
-        ACTION init(name sender, name receiver, name approver, time_point_sec expires, string memo, std::optional<uint64_t> ext_reference);
-
         [[eosio::on_notify("eosio.token::transfer")]]
         void transfer(name from, name to, asset quantity, string memo);
 
-        ACTION approve(uint64_t key, name approver);
+        [[eosio::action]]
+        void init(
+            const name           sender,
+            const name           receiver,
+            const name           approver,
+            const time_point_sec expires,
+            const string         memo,
+            const std::optional<uint64_t> ext_reference
+        );
 
-        ACTION unapprove(uint64_t key, name unapprover);
+        [[eosio::action]]
+        void approve(const uint64_t key, const name approver);
 
-        ACTION claim(uint64_t key);
+        [[eosio::action]]
+        void unapprove(const uint64_t key, const name unapprover);
 
-        ACTION refund(uint64_t key);
+        [[eosio::action]]
+        void claim(const uint64_t key);
 
-        ACTION cancel(uint64_t key);
+        [[eosio::action]]
+        void refund(const uint64_t key);
 
-        ACTION extend(uint64_t key, time_point_sec expires);
+        [[eosio::action]]
+        void cancel(const uint64_t key);
 
-        ACTION close(uint64_t key);
+        [[eosio::action]]
+        void extend(const uint64_t key, const time_point_sec expires);
 
-        ACTION lock(uint64_t key, bool locked);
+        [[eosio::action]]
+        void close(const uint64_t key);
+
+        [[eosio::action]]
+        void lock(const uint64_t key, const bool locked);
 
         // Actions using the external reference key
+        [[eosio::action]]
+        void approveext(const uint64_t ext_key, const name approver);
 
-        ACTION approveext(uint64_t ext_key, name approver);
+        [[eosio::action]]
+        void unapproveext(const uint64_t ext_key, const name unapprover);
 
-        ACTION unapproveext(uint64_t ext_key, name unapprover);
+        [[eosio::action]]
+        void claimext(const uint64_t ext_key);
 
-        ACTION claimext(uint64_t ext_key);
+        [[eosio::action]]
+        void refundext(const uint64_t ext_key);
 
-        ACTION refundext(uint64_t ext_key);
+        [[eosio::action]]
+        void cancelext(const uint64_t ext_key);
 
-        ACTION cancelext(uint64_t ext_key);
+        [[eosio::action]]
+        void extendext(const uint64_t ext_key, const time_point_sec expires);
 
-        ACTION extendext(uint64_t ext_key, time_point_sec expires);
+        [[eosio::action]]
+        void closeext(const uint64_t ext_key);
 
-        ACTION closeext(uint64_t ext_key);
+        [[eosio::action]]
+        void lockext(const uint64_t ext_key, const bool locked);
 
-        ACTION lockext(uint64_t ext_key, bool locked);
+        [[eosio::action]]
+        void clean();
 
-        ACTION clean();
+    private:
+        // 6 months in seconds (Computatio: 6 months * average days per month * 24 hours * 60 minutes * 60 seconds)
+        constexpr static uint32_t SIX_MONTHS_IN_SECONDS = (uint32_t) (6 * (365.25 / 12) * 24 * 60 * 60);
 
-        struct [[eosio::table("escrows"), eosio::contract("escrow")]] escrow_info {
+        struct [[eosio::table]] escrow_info {
             uint64_t        key;
             name            sender;
             name            receiver;
@@ -104,13 +126,8 @@ namespace bos {
         indexed_by<"byextref"_n, const_mem_fun<escrow_info, uint64_t, &escrow_info::by_external_ref> >
         > escrows_table;
 
-    private:
         escrows_table escrows;
         name sending_code;
 
         std::optional<uint64_t> key_for_external_key(std::optional<uint64_t> ext_key);
-
-        // 6 months in seconds (Computatio: 6 months * average days per month * 24 hours * 60 minutes * 60 seconds)
-        constexpr static uint32_t SIX_MONTHS_IN_SECONDS = (uint32_t) (6 * (365.25 / 12) * 24 * 60 * 60);
-    };
 };
