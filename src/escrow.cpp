@@ -5,10 +5,11 @@ namespace bos {
 escrow::~escrow() {}
 
 [[eosio::on_notify("eosio.token::transfer")]]
-void escrow::transfer(name from,
-                            name to,
-                            asset quantity,
-                            string memo) {
+void escrow::transfer( name     from,
+                       name     to,
+                       asset    quantity,
+                       string   memo )
+{
 
     if (to != _self){
         return;
@@ -36,7 +37,13 @@ void escrow::transfer(name from,
     check(found, "Could not find existing escrow to deposit to, transfer cancelled");
 }
 
-ACTION escrow::init(name sender, name receiver, name approver, time_point_sec expires, string memo, std::optional<uint64_t> ext_reference ) {
+ACTION escrow::init( name           sender,
+                     name           receiver,
+                     name           approver,
+                     time_point_sec expires,
+                     string         memo,
+                     std::optional<uint64_t> ext_reference )
+{
     check( sender != receiver, "cannot escrow to self" );
     check( receiver != approver, "receiver cannot be approver" );
     require_auth(sender);
@@ -97,7 +104,8 @@ ACTION escrow::init(name sender, name receiver, name approver, time_point_sec ex
     });
 }
 
-ACTION escrow::approve(uint64_t key, name approver) {
+ACTION escrow::approve( uint64_t key, name approver )
+{
     require_auth(approver);
 
     auto esc_itr = escrows.find(key);
@@ -120,13 +128,15 @@ ACTION escrow::approve(uint64_t key, name approver) {
     });
 }
 
-ACTION escrow::approveext(uint64_t ext_key, name approver) {
+ACTION escrow::approveext( uint64_t ext_key, name approver )
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     approve(*key, approver);
 }
 
-ACTION escrow::unapprove(uint64_t key, name disapprover) {
+ACTION escrow::unapprove( uint64_t key, name disapprover )
+{
     require_auth(disapprover);
 
     auto esc_itr = escrows.find(key);
@@ -139,14 +149,15 @@ ACTION escrow::unapprove(uint64_t key, name disapprover) {
     });
 }
 
-ACTION escrow::unapproveext(uint64_t ext_key, name unapprover) {
+ACTION escrow::unapproveext( uint64_t ext_key, name unapprover )
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     unapprove(*key, unapprover);
 }
 
-ACTION escrow::claim(uint64_t key) {
-
+ACTION escrow::claim( uint64_t key )
+{
     auto esc_itr = escrows.find(key);
     check(esc_itr != escrows.end(), "Could not find escrow with that index");
 
@@ -170,7 +181,8 @@ ACTION escrow::claim(uint64_t key) {
     escrows.erase(esc_itr);
 }
 
-ACTION escrow::claimext(uint64_t ext_key) {
+ACTION escrow::claimext(uint64_t ext_key)
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     print("found key to approve :", key.value());
@@ -180,8 +192,8 @@ ACTION escrow::claimext(uint64_t ext_key) {
 /*
     * Empties an unfilled escrow request
     */
-ACTION escrow::cancel(uint64_t key) {
-
+ACTION escrow::cancel(uint64_t key)
+{
     auto esc_itr = escrows.find(key);
     check(esc_itr != escrows.end(), "Could not find escrow with that index");
 
@@ -192,7 +204,8 @@ ACTION escrow::cancel(uint64_t key) {
     escrows.erase(esc_itr);
 }
 
-ACTION escrow::cancelext(uint64_t ext_key) {
+ACTION escrow::cancelext(uint64_t ext_key)
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     print("found key to approve :", key.value());
@@ -202,8 +215,8 @@ ACTION escrow::cancelext(uint64_t ext_key) {
 /*
     * Allows the sender to withdraw the funds if there are not enough approvals and the escrow has expired
     */
-ACTION escrow::refund(uint64_t key) {
-
+ACTION escrow::refund(uint64_t key)
+{
     auto esc_itr = escrows.find(key);
     check(esc_itr != escrows.end(), "Could not find escrow with that index");
 
@@ -216,8 +229,6 @@ ACTION escrow::refund(uint64_t key) {
     time_point_sec time_now = time_point_sec(current_time_point());
 
     check(time_now >= esc_itr->expires, "Escrow has not expired");
-    // check(esc_itr->approvals.size() >= 2, "Escrow has not received the required number of approvals");
-
 
     eosio::action(
             eosio::permission_level{_self , "active"_n }, esc_itr->ext_asset.contract, "transfer"_n,
@@ -228,18 +239,19 @@ ACTION escrow::refund(uint64_t key) {
     escrows.erase(esc_itr);
 }
 
-ACTION escrow::refundext(uint64_t ext_key) {
+ACTION escrow::refundext(uint64_t ext_key)
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     print("found key to approve :", key.value());
     refund(*key);
 }
 
-/*
-    * Allows the sender to extend the expiry
-    */
-ACTION escrow::extend(uint64_t key, time_point_sec expires) {
-
+/**
+ * Allows the sender to extend the expiry
+ */
+ACTION escrow::extend(uint64_t key, time_point_sec expires)
+{
     auto esc_itr = escrows.find(key);
     check(esc_itr != escrows.end(), "Could not find escrow with that index");
     check(esc_itr->ext_asset.quantity.amount > 0, "This has not been initialized with a transfer");
@@ -259,18 +271,19 @@ ACTION escrow::extend(uint64_t key, time_point_sec expires) {
     });
 }
 
-ACTION escrow::extendext(uint64_t ext_key, time_point_sec expires) {
+ACTION escrow::extendext(uint64_t ext_key, time_point_sec expires)
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     print("found key to approve :", key.value());
     extend(*key,expires);
 }
 
-
-/*
-    * Allows the approver to close and refund an unexpired escrow
-    */
-ACTION escrow::close(uint64_t key) {
+/**
+ * Allows the approver to close and refund an unexpired escrow
+ */
+ACTION escrow::close(uint64_t key)
+{
     auto esc_itr = escrows.find(key);
     check(esc_itr != escrows.end(), "Could not find escrow with that index");
 
@@ -285,7 +298,8 @@ ACTION escrow::close(uint64_t key) {
     escrows.erase(esc_itr);
 }
 
-ACTION escrow::closeext(uint64_t ext_key) {
+ACTION escrow::closeext(uint64_t ext_key)
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     print("found key to approve :", key.value());
@@ -295,8 +309,8 @@ ACTION escrow::closeext(uint64_t ext_key) {
 /*
     * Allows the approver to lock an escrow preventing any actions by sender or receiver
     */
-ACTION escrow::lock(uint64_t key, bool locked) {
-
+ACTION escrow::lock(uint64_t key, bool locked)
+{
     auto esc_itr = escrows.find(key);
     check(esc_itr != escrows.end(), "Could not find escrow with that index");
     require_auth(esc_itr->approver);
@@ -305,17 +319,18 @@ ACTION escrow::lock(uint64_t key, bool locked) {
     escrows.modify(esc_itr, eosio::same_payer, [&](escrow_info &e){
         e.locked = locked;
     });
-
 }
 
-ACTION escrow::lockext(uint64_t ext_key, bool locked) {
+ACTION escrow::lockext(uint64_t ext_key, bool locked)
+{
     auto key = key_for_external_key(ext_key);
     check(key.has_value(), "No escrow exists for this external key.");
     print("found key to approve :", key.value());
     lock(*key,locked);
 }
 
-ACTION escrow::clean() {
+ACTION escrow::clean()
+{
     require_auth(_self);
 
     auto itr = escrows.begin();
@@ -325,9 +340,8 @@ ACTION escrow::clean() {
 }
 
 // private helper
-
-std::optional<uint64_t> escrow::key_for_external_key(std::optional<uint64_t> ext_key) {
-
+std::optional<uint64_t> escrow::key_for_external_key(std::optional<uint64_t> ext_key)
+{
     if (!ext_key.has_value()) {
         return std::nullopt;
     }
@@ -342,34 +356,3 @@ std::optional<uint64_t> escrow::key_for_external_key(std::optional<uint64_t> ext
     return std::nullopt;
 }
 } /// namespace bos
-
-// #define EOSIO_ABI_EX(TYPE, MEMBERS) \
-// extern "C" { \
-//    void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
-//       if( action == "onerror"_n.value) { \
-//          /* onerror is only valid if it is for the "eosio" code account and authorized by "eosio"'s "active permission */ \
-//          check(code == "eosio"_n.value, "onerror action's are only valid from the \"eosio\" system account"); \
-//       } \
-//       auto self = receiver; \
-//       if( (code == self  && action != "transfer"_n.value) || (action == "transfer"_n.value) ) { \
-//          switch( action ) { \
-//             EOSIO_DISPATCH_HELPER( TYPE, MEMBERS ) \
-//          } \
-//          /* does not allow destructor of thiscontract to run: eosio_exit(0); */ \
-//       } \
-//    } \
-// }
-
-// EOSIO_DISPATCH(bos::escrow,
-//               (transfer)
-//               (init)
-//               (approve)(approveext)
-//               (unapprove)(unapproveext)
-//               (claim)(claimext)
-//               (refund)(refundext)
-//               (cancel)(cancelext)
-//               (extend)(extendext)
-//               (close)(closeext)
-//               (lock)(lockext)
-//               (clean)
-// )
