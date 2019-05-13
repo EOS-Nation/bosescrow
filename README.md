@@ -10,18 +10,27 @@ An escrow contract designed for paying worker proposals.  The intention is that 
 
 > Only `bet.bos@active` can `init` an escrow.
 > This will initialize the escrow between the `sender` & `receiver`.
-> BOS funds must be `transfer` into the `escrow.bos` account before starting another escrow.
 
 ```bash
-$ bteosc tx create escrow.bos init '{"sender":"bet.bos","receiver":"<RECEIVER>","approver":"eosio","expires":"2019-09-15T00:00:00","memo":"send BOS escrow funds", "ext_reference":null}' -p bet.bos
+$ eosc tx create escrow.bos init '{"sender":"bet.bos","receiver":"<RECEIVER>","approver":"eosio","escrow_name":"<NAME>","expires_at":"2019-09-15T00:00:00","memo":"BOS escrow"}' -p bet.bos
+```
+
+### Fund/Initialize Escrow
+
+> BOS funds must be `transfer` into the `escrow.bos` account before starting another escrow
+
+```bash
+$ eosc transfer bet.bos escrow.bos "100.0000 BOS" -m "Fund BOS escrow" -p bet.bos
 ```
 
 ### Approve Escrow
 
 > Only `bet.bos@active` or `eosio@active` are allowed to be the `approver`
+> if approver is bet.bos, no change, allow proposer to claim 100% of the fund
+> if approver is BPs, only keep 90% fund for proposer to claim, and BET.BOS will manually execute transfer ACTION in escrow.bos to send fund to each BPs and each auditors
 
 ```bash
-$ eosc tx create escrow.bos approve '{"key":<KEY>,"approver":"bet.bos"}' -p bet.bos
+$ eosc tx create escrow.bos approve '{"escrow_name":"<NAME>","approver":"eosio"}' -p eosio
 ```
 
 ### Claim Escrow
@@ -30,7 +39,7 @@ $ eosc tx create escrow.bos approve '{"key":<KEY>,"approver":"bet.bos"}' -p bet.
 > Anyone can execute the `claim` action.
 
 ```bash
-$ eosc tx create escrow.bos claim '{"key":<KEY>}' -p <ACCOUNT>
+$ eosc tx create escrow.bos claim '{"escrow_name":"<NAME>"}' -p <ACCOUNT>
 ```
 
 ## Caveats
