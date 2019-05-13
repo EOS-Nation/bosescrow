@@ -42,59 +42,34 @@ class [[eosio::contract("escrow")]] escrow : public eosio::contract {
             const name           sender,
             const name           receiver,
             const name           approver,
-            const time_point_sec expires,
-            const string         memo,
-            const std::optional<uint64_t> ext_reference
+            const name           escrow_name,
+            const time_point_sec expires_at,
+            const string         memo
         );
 
         [[eosio::action]]
-        void approve(const uint64_t key, const name approver);
+        void approve(const name escrow_name, const name approver);
 
         [[eosio::action]]
-        void unapprove(const uint64_t key, const name unapprover);
+        void unapprove(const name escrow_name, const name unapprover);
 
         [[eosio::action]]
-        void claim(const uint64_t key);
+        void claim(const name escrow_name);
 
         [[eosio::action]]
-        void refund(const uint64_t key);
+        void refund(const name escrow_name);
 
         [[eosio::action]]
-        void cancel(const uint64_t key);
+        void cancel(const name escrow_name);
 
         [[eosio::action]]
-        void extend(const uint64_t key, const time_point_sec expires);
+        void extend(const name escrow_name, const time_point_sec expires_at);
 
         [[eosio::action]]
-        void close(const uint64_t key);
+        void close(const name escrow_name);
 
         [[eosio::action]]
-        void lock(const uint64_t key, const bool locked);
-
-        // Actions using the external reference key
-        [[eosio::action]]
-        void approveext(const uint64_t ext_key, const name approver);
-
-        [[eosio::action]]
-        void unapproveext(const uint64_t ext_key, const name unapprover);
-
-        [[eosio::action]]
-        void claimext(const uint64_t ext_key);
-
-        [[eosio::action]]
-        void refundext(const uint64_t ext_key);
-
-        [[eosio::action]]
-        void cancelext(const uint64_t ext_key);
-
-        [[eosio::action]]
-        void extendext(const uint64_t ext_key, const time_point_sec expires);
-
-        [[eosio::action]]
-        void closeext(const uint64_t ext_key);
-
-        [[eosio::action]]
-        void lockext(const uint64_t ext_key, const bool locked);
+        void lock(const name escrow_name, const bool locked);
 
         [[eosio::action]]
         void clean();
@@ -104,26 +79,24 @@ class [[eosio::contract("escrow")]] escrow : public eosio::contract {
         constexpr static uint32_t SIX_MONTHS_IN_SECONDS = (uint32_t) (6 * (365.25 / 12) * 24 * 60 * 60);
 
         struct [[eosio::table]] escrow_info {
-            uint64_t        key;
+            name            escrow_name;
             name            sender;
             name            receiver;
             name            approver;
             vector<name>    approvals;
             extended_asset  ext_asset;
             string          memo;
-            time_point_sec  expires;
-            uint64_t        external_reference;
+            time_point_sec  created_at;
+            time_point_sec  expires_at;
             bool            locked = false;
 
-            uint64_t        primary_key() const { return key; }
-            uint64_t        by_external_ref() const { return external_reference; }
-
+            auto            primary_key() const { return escrow_name.value; }
             uint64_t        by_sender() const { return sender.value; }
+            bool            is_expired() const { return time_point_sec(current_time_point()) > expires_at; }
         };
 
         typedef multi_index<"escrows"_n, escrow_info,
-                indexed_by<"bysender"_n, const_mem_fun<escrow_info, uint64_t, &escrow_info::by_sender> >,
-        indexed_by<"byextref"_n, const_mem_fun<escrow_info, uint64_t, &escrow_info::by_external_ref> >
+            indexed_by<"bysender"_n, const_mem_fun<escrow_info, uint64_t, &escrow_info::by_sender> >
         > escrows_table;
 
         escrows_table escrows;

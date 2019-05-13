@@ -8,22 +8,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
-                },
-                {
-                    "name": "approver",
+                    "name": "escrow_name",
                     "type": "name"
-                }
-            ]
-        },
-        {
-            "name": "approveext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
                 },
                 {
                     "name": "approver",
@@ -36,18 +22,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "cancelext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
+                    "name": "escrow_name",
+                    "type": "name"
                 }
             ]
         },
@@ -56,18 +32,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "claimext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
+                    "name": "escrow_name",
+                    "type": "name"
                 }
             ]
         },
@@ -81,18 +47,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "closeext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
+                    "name": "escrow_name",
+                    "type": "name"
                 }
             ]
         },
@@ -101,8 +57,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
+                    "name": "escrow_name",
+                    "type": "name"
                 },
                 {
                     "name": "sender",
@@ -129,12 +85,12 @@
                     "type": "string"
                 },
                 {
-                    "name": "expires",
+                    "name": "created_at",
                     "type": "time_point_sec"
                 },
                 {
-                    "name": "external_reference",
-                    "type": "uint64"
+                    "name": "expires_at",
+                    "type": "time_point_sec"
                 },
                 {
                     "name": "locked",
@@ -147,25 +103,11 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
+                    "name": "escrow_name",
+                    "type": "name"
                 },
                 {
-                    "name": "expires",
-                    "type": "time_point_sec"
-                }
-            ]
-        },
-        {
-            "name": "extendext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
-                },
-                {
-                    "name": "expires",
+                    "name": "expires_at",
                     "type": "time_point_sec"
                 }
             ]
@@ -187,16 +129,16 @@
                     "type": "name"
                 },
                 {
-                    "name": "expires",
+                    "name": "escrow_name",
+                    "type": "name"
+                },
+                {
+                    "name": "expires_at",
                     "type": "time_point_sec"
                 },
                 {
                     "name": "memo",
                     "type": "string"
-                },
-                {
-                    "name": "ext_reference",
-                    "type": "uint64?"
                 }
             ]
         },
@@ -205,22 +147,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
-                },
-                {
-                    "name": "locked",
-                    "type": "bool"
-                }
-            ]
-        },
-        {
-            "name": "lockext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
+                    "name": "escrow_name",
+                    "type": "name"
                 },
                 {
                     "name": "locked",
@@ -233,18 +161,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "refundext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
+                    "name": "escrow_name",
+                    "type": "name"
                 }
             ]
         },
@@ -253,22 +171,8 @@
             "base": "",
             "fields": [
                 {
-                    "name": "key",
-                    "type": "uint64"
-                },
-                {
-                    "name": "unapprover",
+                    "name": "escrow_name",
                     "type": "name"
-                }
-            ]
-        },
-        {
-            "name": "unapproveext",
-            "base": "",
-            "fields": [
-                {
-                    "name": "ext_key",
-                    "type": "uint64"
                 },
                 {
                     "name": "unapprover",
@@ -284,29 +188,14 @@
             "ricardian_contract": "## ACTION: approve\n**PARAMETERS:**\n* __key__ is a unique identifying integer for an escrow entry.\n* __approver__ is an eosio account name.\n\n**INTENT:** The intent of approve is to approve the release of funds to the intended receiver. Each escrow agreement requires at least 2 approvers and can only be approved by the sender, receiver and/or nominated arbitrator.\n\n#### Warning: This action will store the content on the chain in the history logs and the data cannot be deleted later."
         },
         {
-            "name": "approveext",
-            "type": "approveext",
-            "ricardian_contract": "## ACTION: approveext\n**PARAMETERS:**\n* __ext_key__ is a unique identifying integer for an escrow entry as supplied by an external key source.\n* __approver__ is an eosio account name.\n\n**INTENT:** The intent of approve is to approve the release of funds to the intended receiver. Each escrow agreement requires at least 2 approvers and can only be approved by the sender, receiver and/or nominated arbitrator.\n\n#### Warning: This action will store the content on the chain in the history logs and the data cannot be deleted later."
-        },
-        {
             "name": "cancel",
             "type": "cancel",
             "ricardian_contract": "## ACTION: cancel\n\n**PARAMETERS:**\n* __key__ is a unique identifying integer for an escrow entry.\n\n**INTENT:** The intent of cancel is to cancel an escrow agreement. This action can only be performed by the sender as long as no funds have already been transferred for the escrow agreement. Otherwise they would need to wait for the expiry time and then use the refund action.\n\n**TERM:** This action lasts for the duration of the time taken to process the transaction."
         },
         {
-            "name": "cancelext",
-            "type": "cancelext",
-            "ricardian_contract": "## ACTION: cancelext\n\n**PARAMETERS:**\n* __ext_key__ is a unique identifying integer for an escrow entry as supplied by an external key source.\n\n**INTENT:** The intent of cancel is to cancel an escrow agreement. This action can only be performed by the sender as long as no funds have already been transferred for the escrow agreement. Otherwise they would need to wait for the expiry time and then use the refund action.\n\n**TERM:** This action lasts for the duration of the time taken to process the transaction."
-        },
-        {
             "name": "claim",
             "type": "claim",
             "ricardian_contract": "## ACTION: claim\n\n**PARAMETERS:**\n* __key__ is a unique identifying integer for an escrow entry.\n\n**INTENT:** The intent of claim is to claim the escrowed funds for an intended receiver after an escrow agreement has met the required approvals.\n\n**TERM:** This action lasts for the duration of the time taken to process the transaction."
-        },
-        {
-            "name": "claimext",
-            "type": "claimext",
-            "ricardian_contract": "## ACTION: claimext\n\n**PARAMETERS:**\n* __ext_key__ is a unique identifying integer for an escrow entry as supplied by an external key source.\n\n**INTENT:** The intent of claim is to claim the escrowed funds for an intended receiver after an escrow agreement has met the required approvals.\n\n**TERM:** This action lasts for the duration of the time taken to process the transaction."
         },
         {
             "name": "clean",
@@ -319,18 +208,8 @@
             "ricardian_contract": ""
         },
         {
-            "name": "closeext",
-            "type": "closeext",
-            "ricardian_contract": ""
-        },
-        {
             "name": "extend",
             "type": "extend",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "extendext",
-            "type": "extendext",
             "ricardian_contract": ""
         },
         {
@@ -344,29 +223,14 @@
             "ricardian_contract": ""
         },
         {
-            "name": "lockext",
-            "type": "lockext",
-            "ricardian_contract": ""
-        },
-        {
             "name": "refund",
             "type": "refund",
             "ricardian_contract": "## ACTION: refund\n\n**PARAMETERS:**\n* __key__ is a unique identifying integer for an escrow entry.\n\n**INTENT:** The intent of refund is to return the escrowed funds back to the original sender. This action can only be run after the contract has met the intended expiry time.\n\n**TERM:** This action lasts for the duration of the time taken to process the transaction."
         },
         {
-            "name": "refundext",
-            "type": "refundext",
-            "ricardian_contract": "## ACTION: refundext\n\n**PARAMETERS:**\n* __ext_key__ is a unique identifying integer for an escrow entry as supplied by an external key source.\n\n**INTENT:** The intent of refund is to return the escrowed funds back to the original sender. This action can only be run after the contract has met the intended expiry time.\n\n**TERM:** This action lasts for the duration of the time taken to process the transaction."
-        },
-        {
             "name": "unapprove",
             "type": "unapprove",
             "ricardian_contract": "## ACTION: unapprove\n**PARAMETERS:**\n* __key__ is a unique identifying integer for an escrow entry.\n* __disapprover__ is an eosio account name.\n\n**INTENT:** The intent of unapprove is to unapprove the release of funds to the intended receiver from a previous approved action. Each escrow agreement requires at least 2 approvers and can only be approved by the sender, receiver and/or nominated arbitrator.\n\n#### Warning: This action will store the content on the chain in the history logs and the data cannot be deleted later."
-        },
-        {
-            "name": "unapproveext",
-            "type": "unapproveext",
-            "ricardian_contract": "## ACTION: unapproveext\n**PARAMETERS:**\n* __ext_key__ is a unique identifying integer for an escrow entry as supplied by an external key source.\n* __disapprover__ is an eosio account name.\n\n**INTENT:** The intent of unapprove is to unapprove the release of funds to the intended receiver from a previous approved action. Each escrow agreement requires at least 2 approvers and can only be approved by the sender, receiver and/or nominated arbitrator.\n\n#### Warning: This action will store the content on the chain in the history logs and the data cannot be deleted later."
         }
     ],
     "tables": [
