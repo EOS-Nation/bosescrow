@@ -78,7 +78,7 @@ class [[eosio::contract("escrow")]] escrow : public eosio::contract {
         // 6 months in seconds (Computatio: 6 months * average days per month * 24 hours * 60 minutes * 60 seconds)
         constexpr static uint32_t SIX_MONTHS_IN_SECONDS = (uint32_t) (6 * (365.25 / 12) * 24 * 60 * 60);
 
-        struct [[eosio::table]] escrow_info {
+        struct [[eosio::table]] escrow_row {
             name            escrow_name;
             name            sender;
             name            receiver;
@@ -95,8 +95,8 @@ class [[eosio::contract("escrow")]] escrow : public eosio::contract {
             bool            is_expired() const { return time_point_sec(current_time_point()) > expires_at; }
         };
 
-        typedef multi_index<"escrows"_n, escrow_info,
-            indexed_by<"bysender"_n, const_mem_fun<escrow_info, uint64_t, &escrow_info::by_sender> >
+        typedef multi_index<"escrows"_n, escrow_row,
+            indexed_by<"bysender"_n, const_mem_fun<escrow_row, uint64_t, &escrow_row::by_sender> >
         > escrows_table;
 
         escrows_table escrows;

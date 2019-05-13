@@ -53,7 +53,7 @@
             ]
         },
         {
-            "name": "escrow_info",
+            "name": "escrow_row",
             "base": "",
             "fields": [
                 {
@@ -236,7 +236,7 @@
     "tables": [
         {
             "name": "escrows",
-            "type": "escrow_info",
+            "type": "escrow_row",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
