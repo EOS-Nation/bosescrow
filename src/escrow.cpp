@@ -259,7 +259,7 @@ ACTION escrow::extend(const name escrow_name, const time_point_sec expires_at)
 }
 
 /**
- * Allows the approver to close and refund an unexpired escrow
+ * Allows the `approver` to close and refund an unexpired escrow
  */
 ACTION escrow::close(const name escrow_name)
 {
@@ -291,7 +291,7 @@ ACTION escrow::close(const name escrow_name)
 }
 
 /**
- * Allows the approver to lock an escrow preventing any actions by sender or receiver
+ * Allows the `approver` to lock an escrow preventing any actions by `sender` or `receiver`.
  */
 ACTION escrow::lock(const name escrow_name, const bool locked)
 {
